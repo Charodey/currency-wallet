@@ -1,4 +1,4 @@
-class Purse:
+class Wallet:
     __allow_credit = True
     __cash = {
         'RUB': 0,

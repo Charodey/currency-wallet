@@ -1,6 +1,6 @@
 import json
 from aiohttp import web
-from money import Purse
+from money import Wallet
 
 
 async def hello(request):
@@ -9,7 +9,7 @@ async def hello(request):
 async def get_data(request):
     currency = request.match_info['currency']
     result = {
-        currency: Purse().get(currency)
+        currency: Wallet().get(currency)
     }
     return web.Response(text=json.dumps(result))
 
