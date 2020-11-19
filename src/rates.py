@@ -7,9 +7,10 @@ class Rates:
 
     __currency = {}
 
-    def __init__(self, currency=['EUR', 'USD']):
-        for key in currency:
-            self.__currency[key.upper()] = None
+    def __init__(self, currency=None):
+        if currency:
+            for key in currency:
+                self.__currency[key.upper()] = None
 
     def __requests(self):
         response = requests.get(self.__URL)
@@ -25,5 +26,7 @@ class Rates:
             self.__currency[currency] = data['Valute'][currency]['Value']
 
     def get(self, currency=None):
-        if not currency:
-            return self.__currency
+        if currency:
+            return self.__currency[currency.upper()] if currency.upper() in self.__currency else None
+
+        return self.__currency

@@ -38,7 +38,7 @@ class Monitoring:
     def __init__(self, currencies):
         self.args = vars(parse_init_params())
 
-        self.rate = Rates()
+        self.rate = Rates(['EUR', 'USD'])
 
         cash = {}
         for currency in currencies:
@@ -59,15 +59,15 @@ class Monitoring:
     async def update_exchange_rate(self):
         while True:
             self.rate.update()
-            print(self.rate.get())
+            #print(self.rate.get())
             await asyncio.sleep(5)
 
     async def print_rate_and_purse(self):
         while True:
             print(self.wallet.get())
-            print()
-            print(self.rate.get())
-            print('sum: ...')
+            #print()
+            #print(self.rate.get())
+            #print('sum: ...')
             await asyncio.sleep(7)
 
     async def run_web_server(self):

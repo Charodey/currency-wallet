@@ -1,3 +1,6 @@
+from rates import Rates
+
+
 class Wallet:
     __allow_credit = True
     __cash = {
@@ -38,3 +41,13 @@ class Wallet:
             self.__cash[currency.upper()] += cash[currency]
 
         return True
+
+    def get_sum_in_currency(self, currency):
+        amount = 0
+        for cash_curr in self.__cash:
+            if cash_curr == currency:
+                amount += self.__cash[currency]
+            else:
+                amount += self.__cash[currency] * 1 #Rates().get(currency)
+
+        return amount
