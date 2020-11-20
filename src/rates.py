@@ -1,6 +1,8 @@
 import json
 import requests
+import logging
 from metasingleton import MetaSingleton
+import monitoring
 
 
 class Rates(metaclass=MetaSingleton):
@@ -14,17 +16,24 @@ class Rates(metaclass=MetaSingleton):
                 self.__currency[key.upper()] = None
 
     def __requests(self):
+        monitoring.logger.debug('rates request: %s', self.__URL)
         response = requests.get(self.__URL)
+        monitoring.logger.debug('rates response: %s', response.text)
+
         try:
             return response.json()
         except json.JSONDecodeError:
-            raise 'Ошибка получения курса валют'
+            monitoring.logger.error('Ошибка получения курса валют')
 
     def update(self):
         data = self.__requests()
 
         for currency in self.__currency:
             self.__currency[currency] = data['Valute'][currency]['Value']
+
+        if data and monitoring.logger.getEffectiveLevel() != logging.DEBUG:
+            monitoring.logger.info('Успешное получение данных о курсах валют')
+            monitoring.logger.info(self.__currency)
 
     def get(self, currency=None):
         if currency:

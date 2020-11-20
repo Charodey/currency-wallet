@@ -1,13 +1,18 @@
 from abc import ABC
 import time
 import argparse
+import sys
 
 import asyncio
 import aiohttp
+import logging
 
 from rates import Rates
 from money import Wallet
 from routes import routes
+
+
+logger = logging.getLogger('CurrencyWallet')
 
 
 def str2bool(value):
@@ -32,12 +37,17 @@ def parse_init_params():
 
     return parser.parse_args()
 
+def set_logger_options(is_debug=False):
+    console_output_handler = logging.StreamHandler(sys.stderr)
+    logger.addHandler(console_output_handler)
+    logger.setLevel(logging.DEBUG if is_debug else logging.INFO)
+
 
 class Monitoring(ABC):
-    args = []
-
     def __init__(self, currencies):
         self.args = vars(parse_init_params())
+        set_logger_options(self.args['debug'])
+        logger.info('Starting app ...')
 
         self.rate = Rates(['EUR', 'USD'])
 
@@ -62,7 +72,6 @@ class MyMonitoring(Monitoring):
     async def task_update_exchange_rate(self):
         while True:
             self.rate.update()
-            #print(self.rate.get())
             await asyncio.sleep(5)
 
     async def task_print_rate_and_purse(self):
