@@ -1,3 +1,4 @@
+from abc import ABC
 import time
 import argparse
 
@@ -32,7 +33,7 @@ def parse_init_params():
     return parser.parse_args()
 
 
-class Monitoring:
+class Monitoring(ABC):
     args = []
 
     def __init__(self, currencies):
@@ -50,19 +51,21 @@ class Monitoring:
         asyncio.run(self.run_tasks())
 
     async def run_tasks(self):
-        asyncio.create_task(self.update_exchange_rate())
-        asyncio.create_task(self.print_rate_and_purse())
-        asyncio.create_task(self.run_web_server())
+        task_methods = [method for method in dir(self) if method.find('task_') == 0]
+        for method in task_methods:
+            asyncio.create_task(getattr(self, method)())
 
         await asyncio.Event().wait()
 
-    async def update_exchange_rate(self):
+
+class MyMonitoring(Monitoring):
+    async def task_update_exchange_rate(self):
         while True:
             self.rate.update()
             #print(self.rate.get())
             await asyncio.sleep(5)
 
-    async def print_rate_and_purse(self):
+    async def task_print_rate_and_purse(self):
         while True:
             print(self.wallet.get())
             #print()
@@ -70,7 +73,7 @@ class Monitoring:
             #print('sum: ...')
             await asyncio.sleep(7)
 
-    async def run_web_server(self):
+    async def task_run_web_server(self):
         app = aiohttp.web.Application()
         for route in routes:
             app.router.add_route(route[0], route[1], route[2], name=route[3])

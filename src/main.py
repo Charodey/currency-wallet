@@ -1,6 +1,6 @@
-from monitoring import Monitoring
+from monitoring import MyMonitoring
 
 
 if __name__ == '__main__':
     cash = ['rub', 'eur', 'usd']
-    Monitoring(cash).run()
+    MyMonitoring(cash).run()
