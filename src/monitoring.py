@@ -8,7 +8,7 @@ import aiohttp
 import logging
 
 from rates import Rates
-from money import Wallet
+from money import Wallet, get_wallet_statement
 from web import routes
 
 
@@ -74,13 +74,14 @@ class MyMonitoring(Monitoring):
             self.rate.update()
             await asyncio.sleep(5)
 
-    async def task_print_rate_and_purse(self):
+    async def task_print_amount_info(self):
+        amount_info = {}
         while True:
-            print(self.wallet.get())
-            #print()
-            #print(self.rate.get())
-            #print('sum: ...')
-            await asyncio.sleep(7)
+            await asyncio.sleep(60)
+            new_amount_info = get_wallet_statement()
+            if amount_info != new_amount_info:
+                amount_info = new_amount_info
+                logger.info('\nAmount info:\n%s\n', amount_info)
 
     async def task_run_web_server(self):
         app = aiohttp.web.Application()

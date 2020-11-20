@@ -1,6 +1,6 @@
 import json
-import requests
 import logging
+import requests
 from metasingleton import MetaSingleton
 import monitoring
 
