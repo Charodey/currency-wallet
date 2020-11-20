@@ -1,7 +1,8 @@
+from metasingleton import MetaSingleton
 from rates import Rates
 
 
-class Wallet:
+class Wallet(metaclass=MetaSingleton):
     __allow_credit = True
     __cash = {
         'RUB': 0,

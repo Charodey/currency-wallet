@@ -1,8 +1,9 @@
 import json
 import requests
+from metasingleton import MetaSingleton
 
 
-class Rates:
+class Rates(metaclass=MetaSingleton):
     __URL = 'https://www.cbr-xml-daily.ru/daily_json.js'
 
     __currency = {}
