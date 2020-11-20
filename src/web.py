@@ -1,30 +1,13 @@
 import json
 from aiohttp import web
-from money import Wallet
-from rates import Rates
+from money import Wallet, get_wallet_statement
 
 
 async def hello(request):
     return web.Response(text='Hello, world')
 
 async def get_amount(request):
-    text = ''
-    cash = Wallet().get()
-
-    for currency in cash:
-        text += '{}: {}\n'.format(currency, cash[currency])
-    text += '\n'
-    for currency in cash:
-        if currency.lower() != 'rub':
-            text += 'rub-{}: {}\n'.format(currency.lower(), Rates().get(currency))
-        else:
-            text += 'usd-eur: {}\n'.format(Rates().get('eur') / Rates().get('usd'))
-    text += '\n'
-    text += 'sum:'
-    for currency in cash:
-        text += ' {} {} /'.format(currency, Wallet().get_sum_in_currency(currency))
-
-    return web.Response(text=text)
+    return web.Response(text=get_wallet_statement())
 
 async def get_currency(request):
     currency = request.match_info['currency']

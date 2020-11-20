@@ -9,7 +9,7 @@ import logging
 
 from rates import Rates
 from money import Wallet
-from routes import routes
+from web import routes
 
 
 logger = logging.getLogger('CurrencyWallet')
