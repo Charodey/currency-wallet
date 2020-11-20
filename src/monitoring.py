@@ -28,7 +28,7 @@ def str2bool(value):
 def parse_init_params():
     parser = argparse.ArgumentParser(description='Get initial parameters.')
 
-    parser.add_argument('--period', action='store', dest='N', required=True,
+    parser.add_argument('--period', action='store', dest='period', type=int, required=True,
                         help='period of updating the exchange rate, in minutes')
     parser.add_argument('--rub', action='store', dest='rub', type=float, required=True)
     parser.add_argument('--eur', action='store', dest='eur', type=float, required=True)
@@ -72,16 +72,19 @@ class MyMonitoring(Monitoring):
     async def task_update_exchange_rate(self):
         while True:
             self.rate.update()
-            await asyncio.sleep(5)
+            await asyncio.sleep(60 * self.args['period'])
 
     async def task_print_amount_info(self):
+        while not list(self.rate.get().values())[0]:
+            await asyncio.sleep(1)
+
         amount_info = {}
         while True:
-            await asyncio.sleep(60)
             new_amount_info = get_wallet_statement()
             if amount_info != new_amount_info:
                 amount_info = new_amount_info
                 logger.info('\nAmount info:\n%s\n', amount_info)
+            await asyncio.sleep(60)
 
     async def task_run_web_server(self):
         app = aiohttp.web.Application()
